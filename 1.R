@@ -102,3 +102,25 @@ train.tokens <- tokens_select(train.tokens, stopwords(),
 
 stopwords()
 
+
+#Now, perform stemming -> removal of similar waale words!! (run, running types)
+train.tokens <- tokens_wordstem(train.tokens, language = "english")
+
+#Let's again have a look at the previous example
+train.tokens[[357]]
+#[1] "dear"    "reach"   "railway" "happen" 
+
+
+
+# Create our term-incidence-matrix....Finally!!
+train.tokens.dfm <- dfm(train.tokens, tolower = FALSE)
+
+#dfm matlab kuch nai document frequency matrix hota hai, and noe we need to convert it to something that we can work on, namelt a matrix!
+train.tokens.matrix <- as.matrix(train.tokens.dfm)
+#viewing a small portion of the HUGE HUGE Matrix:
+View(train.tokens.matrix[1:20, 1:100])
+dim(train.tokens.matrix)
+#Thius is the resuklt: [1] 3901 5773 -> The dimension of our matrix!!
+
+#Inspecting the column names obtained due to stemming!!
+colnames(train.tokens.matrix)[1:50]
