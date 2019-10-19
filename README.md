@@ -16,4 +16,6 @@ Following is the DWM Project implemented by the 5th Sem CSE Department of IIIT B
 ![alt text](https://github.com/hinduBale/TextAnalysisBasics/blob/master/Snippets/termIncidenceMatrix.PNG)
 * **Creation of Tf-Idf Matrix**\
 ![alt text](https://github.com/hinduBale/TextAnalysisBasics/blob/master/Snippets/tf-idfMatrix2.PNG)
+* **Implementation of n-grams**\
+![alt text](https://github.com/hinduBale/TextAnalysisBasics/blob/master/Snippets/bi_gramMatrix.PNG)
 * **Creation of Cosine similarity on the vector space.** 
