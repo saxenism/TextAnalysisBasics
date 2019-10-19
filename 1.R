@@ -236,3 +236,33 @@ View(train.tokens.tfidf.df[1:50, 1:50])
 # Cleans up unused objects in memory.
 gc()
 #Very very necessary!! Bhai mera 7 GB Ram lag rha hai abi :/
+
+
+#So, we saw ki apni 99.9% matrix sparse hai, so now we move onto SVD (Singular Value decomposition)
+#Now, we are treating the docs as vectors now..They are much more intuitive.
+
+install.packages("irlba")
+
+library(irlba)
+
+#the t here stands for transpose, cause we don't need document-term matrix balki we want term-document matrix
+train.irlba <- irlba(t(train.tokens.tfidf), nv = 300, maxit = 600)
+
+#nu will intialise to nv and these 300 and 600 values are both statisctally derived values.
+#maine koi jaadu nai kiya hai
+
+View(train.irlba)
+
+
+#we know ab jabbhi bhi koi naya data aana hai, usko bhi iss geometrical form mein convert hona padega to be judged by our model..
+#So, here's the maths to do it..
+
+sigma.inverse <- 1/train.irlba$d
+u.transpose <- t(train.irlba$u)
+document <- train.tokens.tfidf[1, ]
+document.hat <- sigma.inverse*u.transpose %*% document #%*% is how you do matrix multiplication in R aur ab C yaad karo zaraa
+
+#Now how do we actually use this mast 300 features wali table
+
+#train.svd <- data.frame(Label = train$Label, train.irlba$v)
+
