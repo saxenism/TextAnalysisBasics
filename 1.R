@@ -1,6 +1,7 @@
 #Installing all packages that we might require!! And yup, I'm being overtly optimistic with randomForest.. LolXDD
 
 install.packages(c("ggplot2", "e1071", "caret", "quanteda", "irlba", "randomForest"))
+install.packages(c("lsa", "SnowballC"))
 
 
 #Loading up the CSV data(thanks Kaggle) into RStudio
@@ -187,7 +188,12 @@ train.tokens.tfidf.df <- cbind(Label = train$Label, data.frame(train.tokens.tfid
 names(train.tokens.tfidf.df) <- make.names(names(train.tokens.tfidf.df))
 View(train.tokens.tfidf.df[1:50, 1:50])
 
+sparse_matrix <- train.tokens.tfidf.df
 
 
-
+library(SnowballC)
+#Implementing the cosine similarity to judge the similarity of two documents being represented as vectorss!!!
+library(lsa)
+train.similarities <- cosine(t(as.matrix(sparse_matrix[, -c(1,ncol(sparse_matrix))])))
+dim[train.similarities]
 
