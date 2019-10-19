@@ -49,6 +49,7 @@ ggplot(spam.raw, aes(x = TextLength, fill = Label)) +
 library(caret)
 
 #Creating the standard 70%/30% stratified split!!
+#kind of random number generate karne k liyeuj
 set.seed(32984)
 indexes <- createDataPartition(spam.raw$Label, times = 1,
                                p = 0.7, list = FALSE)
@@ -187,13 +188,51 @@ sum(which(!complete.cases(train.tokens.tfidf)))
 train.tokens.tfidf.df <- cbind(Label = train$Label, data.frame(train.tokens.tfidf))
 names(train.tokens.tfidf.df) <- make.names(names(train.tokens.tfidf.df))
 View(train.tokens.tfidf.df[1:50, 1:50])
+     
+#Implementing n-grams!!
+?tokens_ngrams #Function from quanteda to add n-grams from tokens!! 
+train.tokens <- tokens_ngrams(train.tokens, n = 1:2)
+train.tokens[[357]]
 
-sparse_matrix <- train.tokens.tfidf.df
+
+#Phir wahi...pehle dfm mein and then into a matrix!
+train.tokens.dfm <- dfm(train.tokens, tolower = FALSE)
+train.tokens.matrix <- as.matrix(train.tokens.dfm)
+train.tokens.dfm
+#Document-feature matrix of: 3,901 documents, 43,158 features (99.9% sparse). 
+#99.9% LOL!!!
+#So, while we gain more insight, but our space complexity has exploded!!
+
+#Ab dobara iss matrix ka tf-idf nikalte hain!!
+
+# Normalize all documents via TF.
+train.tokens.df <- apply(train.tokens.matrix, 1, term.frequency)
 
 
-library(SnowballC)
-#Implementing the cosine similarity to judge the similarity of two documents being represented as vectorss!!!
-library(lsa)
-train.similarities <- cosine(t(as.matrix(sparse_matrix[, -c(1,ncol(sparse_matrix))])))
-dim[train.similarities]
+# Calculate the IDF vector that we will use for training and test data!
+train.tokens.idf <- apply(train.tokens.matrix, 2, inverse.doc.freq)
 
+
+# Calculate TF-IDF for the training corpus or the spam text 
+train.tokens.tfidf <-  apply(train.tokens.df, 2, tf.idf, 
+                             idf = train.tokens.idf)
+
+
+# Transpose the matrix
+train.tokens.tfidf <- t(train.tokens.tfidf)
+
+
+# Fix incomplete cases
+incomplete.cases <- which(!complete.cases(train.tokens.tfidf))
+train.tokens.tfidf[incomplete.cases,] <- rep(0.0, ncol(train.tokens.tfidf))
+
+
+# Make a clean data frame.
+train.tokens.tfidf.df <- cbind(Label = train$Label, data.frame(train.tokens.tfidf))
+names(train.tokens.tfidf.df) <- make.names(names(train.tokens.tfidf.df))
+View(train.tokens.tfidf.df[1:50, 1:50])
+
+
+# Cleans up unused objects in memory.
+gc()
+#Very very necessary!! Bhai mera 7 GB Ram lag rha hai abi :/
