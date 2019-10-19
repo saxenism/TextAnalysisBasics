@@ -124,3 +124,70 @@ dim(train.tokens.matrix)
 
 #Inspecting the column names obtained due to stemming!!
 colnames(train.tokens.matrix)[1:50]
+
+
+#Defining our functions for TF 
+term.frequency <- function(row){
+  row/sum(row)
+}
+
+#Defining the function for IDF
+inverse.doc.freq <- function(col) {
+  corpus.size <- length(col)
+  doc.count <- length(which(col > 0))
+  
+  log10(corpus.size / doc.count)
+}
+
+#Function for calculating Tf*Idf
+tf.idf <- function(tf, idf) {
+  tf * idf
+}
+
+# First step, normalize all documents via TF.
+train.tokens.df <- apply(train.tokens.matrix, 1, term.frequency)
+#apply kind of R ka loop hota hai..
+dim(train.tokens.df)
+#[1] 5773 3901 -> This means the matrix is transposed rn
+View(train.tokens.df[1:20, 1:100])
+
+
+# Second step, calculate the IDF vector 
+train.tokens.idf <- apply(train.tokens.matrix, 2, inverse.doc.freq)
+str(train.tokens.idf)
+
+# Lastly, calculate TF-IDF for our training corpus.
+train.tokens.tfidf <-  apply(train.tokens.df, 2, tf.idf, idf = train.tokens.idf)
+dim(train.tokens.tfidf)
+#[1] 5773 3901 -> Still transposed!!
+View(train.tokens.tfidf[1:25, 1:25])
+
+
+# Transpose the matrix
+train.tokens.tfidf <- t(train.tokens.tfidf)
+dim(train.tokens.tfidf)
+#[1] 3901 5773 -> Back to normaL!!
+View(train.tokens.tfidf[1:25, 1:25])
+
+
+# Check for incopmlete cases.
+#incomplete cases isliye honge kyuki, agar kisi text mein sirf smileys, sirf numbers ya surf stopwords hue to wo string null ho jaani hai!!
+incomplete.cases <- which(!complete.cases(train.tokens.tfidf))
+train$Text[incomplete.cases]
+
+
+# Fix incomplete cases
+train.tokens.tfidf[incomplete.cases,] <- rep(0.0, ncol(train.tokens.tfidf))
+dim(train.tokens.tfidf)
+sum(which(!complete.cases(train.tokens.tfidf)))
+
+
+# Make a clean data frame using the same process as before.
+train.tokens.tfidf.df <- cbind(Label = train$Label, data.frame(train.tokens.tfidf))
+names(train.tokens.tfidf.df) <- make.names(names(train.tokens.tfidf.df))
+View(train.tokens.tfidf.df[1:50, 1:50])
+
+
+
+
+
