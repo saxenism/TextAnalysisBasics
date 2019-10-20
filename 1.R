@@ -264,5 +264,9 @@ document.hat <- sigma.inverse*u.transpose %*% document #%*% is how you do matrix
 
 #Now how do we actually use this mast 300 features wali table
 
-#train.svd <- data.frame(Label = train$Label, train.irlba$v)
+train.svd <- data.frame(Label = train$Label, train.irlba$v)
+
+install.packages("lsa")
+library(lsa)
+train.similarities <- cosine(t(as.matrix(train.svd[, -c(1, ncol(train.svd))])))
 
