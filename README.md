@@ -24,3 +24,4 @@ Following is the DWM Project implemented by the 5th Sem CSE Department of IIIT B
     * _Summary of the SVD Table_
      ![alt text](https://github.com/hinduBale/TextAnalysisBasics/blob/master/Snippets/svd1.PNG)    
 * **Creation of Cosine similarity on the vector space.** 
+![alt text](https://github.com/hinduBale/TextAnalysisBasics/blob/master/Snippets/cosineSim.PNG)
